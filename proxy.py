@@ -1,18 +1,19 @@
 import sys
+from itertools import cycle
 
 
 class Proxy:
     def __init__(self, host: str, port: str, username: str, password: str):
         self.requests_proxy = username + ":" + password + "@" + host + ":" + port
 
-    def getProxy(self):
+    def getProxy(self) -> dict:
         return {
             "http": self.requests_proxy,
             "https": self.requests_proxy
         }
 
 
-def load_proxies():
+def Load_proxies() -> cycle:
     proxy_list = []
 
     try:
@@ -30,4 +31,8 @@ def load_proxies():
     except Exception as e:
         sys.exit("ERROR - " + str(e))
 
-    return proxy_list
+    return cycle(proxy_list)
+
+
+def Rotate_proxy(session, proxies):
+    session.proxies.update(next(proxies).getProxy())

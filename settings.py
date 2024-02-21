@@ -1,4 +1,6 @@
 USERNAME = ''
 PASSWORD = ''
 
-webhook_url = ''
+WEBHOOK_URL = ''
+
+DELAY = 10  # sec
