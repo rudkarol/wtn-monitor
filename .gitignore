@@ -5,6 +5,7 @@ __pycache__/
 venv/
 
 cookies
+offers_IDs
 geckodriver.log
 proxies.txt
 session-token.txt
