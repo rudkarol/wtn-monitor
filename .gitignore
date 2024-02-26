@@ -7,3 +7,4 @@ venv/
 cookies
 geckodriver.log
 proxies.txt
+session-token.txt
