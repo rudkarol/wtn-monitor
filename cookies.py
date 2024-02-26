@@ -20,11 +20,20 @@ def Restore_cookies():
         with open('cookies', 'rb') as cookies_file:
             return pickle.load(cookies_file)
     except Exception as e:
-        print("WARNING - " + str(e) + " | reading session-token.txt")
+        print("WARNING - " + str(e))
+        print("reading session-token.txt ...")
 
         try:
             return cookiejar_from_dict({
-                    "__Secure-next-auth.session-token": read_session_token()
-                })
+                "__Secure-next-auth.session-token": read_session_token()
+            })
         except Exception as e:
             sys.exit(str(e))
+
+
+def save_cookies(session):
+    try:
+        with open('cookies', 'wb') as cookies_file:
+            pickle.dump(session.cookies, cookies_file)
+    except Exception as e:
+        print("ERROR - " + str(e))
