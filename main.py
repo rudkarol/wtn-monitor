@@ -51,10 +51,29 @@ def read_acceptable_offers():
         sys.exit("ERROR - " + str(e))
 
 
+def initial_request(session: tls_client.Session, proxies):
+    init_request = session.get('https://sell.wethenew.com/api/auth/session', headers=headers.access_token_header)
+
+    if init_request.status_code == 200:
+        response = init_request.json()
+        print(response['user']['accessToken'])
+        return response['user']['accessToken']
+    else:
+        raise Exception("init request exception")
+
+
 def main():
     session = tls_client.Session(client_identifier="chrome_120", random_tls_extension_order=True)
     proxies = Load_proxies()
-    Rotate_proxy(session, proxies)
+    offers = read_past_offers()
+
+    # Rotate_proxy(session, proxies)
+    session.cookies.update(cookies.restore_cookies())
+
+    try:
+        accessToken = initial_request(session, proxies)
+    except tls_client.exceptions.HTTPError as e:
+        print(e)
 
 
 if __name__ == "__main__":

@@ -15,7 +15,7 @@ def read_session_token():
         print("ERROR - " + str(e))
 
 
-def Restore_cookies():
+def restore_cookies():
     try:
         with open('cookies', 'rb') as cookies_file:
             return pickle.load(cookies_file)

@@ -1,4 +1,4 @@
-accessToken_header = {
+access_token_header = {
     'Accept': 'application/json, text/html, */*',
     'Accept-Encoding': 'gzip, deflate, br',
     'Accept-Language': 'pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7',
@@ -6,7 +6,7 @@ accessToken_header = {
 }
 
 
-def get_offers_header(access_token: str):
+def get_offers_header(access_token: str) -> dict:
     return {
         'Accept': 'application/json, text/plain, */*',
         'Accept-Encoding': 'gzip, deflate, br',
@@ -22,7 +22,7 @@ def get_offers_header(access_token: str):
     }
 
 
-def accept_offer_header(access_token):
+def accept_offer_header(access_token) -> dict:
     return {
         'Accept': 'application/json, text/plain, */*',
         'Accept-Encoding': 'gzip, deflate, br',
