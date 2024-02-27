@@ -1,7 +1,5 @@
-import pickle
+import json
 import sys
-
-from tls_client.sessions import cookiejar_from_dict
 
 
 def read_session_token():
@@ -17,23 +15,21 @@ def read_session_token():
 
 def restore_cookies():
     try:
-        with open('cookies', 'rb') as cookies_file:
-            return pickle.load(cookies_file)
+        with open('cookies.json', 'r') as cookies_file:
+            return json.load(cookies_file)
     except Exception as e:
         print("WARNING - " + str(e))
         print("reading session-token.txt ...")
 
         try:
-            return cookiejar_from_dict({
-                "__Secure-next-auth.session-token": read_session_token()
-            })
+            return {"__Secure-next-auth.session-token": read_session_token()}
         except Exception as e:
             sys.exit(str(e))
 
 
-def save_cookies(session):
+def save_cookies(cookies):
     try:
-        with open('cookies', 'wb') as cookies_file:
-            pickle.dump(session.cookies, cookies_file)
+        with open('cookies.json', 'w') as cookies_file:
+            json.dump(cookies, cookies_file)
     except Exception as e:
         print("ERROR - " + str(e))
