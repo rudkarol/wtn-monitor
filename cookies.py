@@ -1,6 +1,8 @@
 import json
 import sys
 
+from http.cookiejar import CookieJar
+
 
 def read_session_token():
     try:
@@ -27,9 +29,23 @@ def restore_cookies():
             sys.exit(str(e))
 
 
-def save_cookies(cookies):
-    try:
-        with open('cookies.json', 'w') as cookies_file:
-            json.dump(cookies, cookies_file)
-    except Exception as e:
-        print('ERROR - ' + str(e))
+def get_dict(self, domain=None, path=None):
+    dictionary = {}
+
+    for cookie in iter(self):
+        if (domain is None or cookie.domain == domain) and (
+                path is None or cookie.path == path
+        ):
+            dictionary[cookie.name] = cookie.value
+
+    return dictionary
+
+
+CookieJar.get_dict = get_dict
+
+
+def save_cookies(cookie_jar: CookieJar):
+    cookies_dict = cookie_jar.get_dict()
+
+    with open('cookies.json', 'w') as cookies_file:
+        json.dump(cookies_dict, cookies_file)

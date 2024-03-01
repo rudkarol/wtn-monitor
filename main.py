@@ -93,10 +93,12 @@ def main():
         except (ValueError, KeyError) as e:
             print(e)
 
-        try:
-            get_offers(client, access_token)
-        except Exception as e:
-            print(e)
+        # try:
+        #     get_offers(client, access_token)
+        # except Exception as e:
+        #     print(e)
+
+        cookies.save_cookies(client.cookies.jar)
 
 
 if __name__ == '__main__':
