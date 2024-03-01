@@ -1,8 +1,9 @@
+import pickle
 import httpx
 import csv
 import json
+import sys
 
-import settings
 import cookies
 import headers
 from proxy import Load_proxies, Rotate_proxy
@@ -47,21 +48,37 @@ def read_acceptable_offers():
             writer = csv.DictWriter(csvfile, fieldnames=['SKU', 'NAME', 'PID', 'MIN_PRICE'])
             writer.writeheader()
 
-        sys.exit("ERROR - wtn_acceptable.csv file does not exist! File created")
+        sys.exit('ERROR - wtn_acceptable.csv file does not exist! File created')
     except Exception as e:
-        sys.exit("ERROR - " + str(e))
+        sys.exit('ERROR - ' + str(e))
 
 
-def initial_request(client: httpx.Client):
-    response = client.get("https://sell.wethenew.com/api/auth/session")
+def initial_request(client: httpx.Client) -> str:
+    r = (client.get('https://sell.wethenew.com/api/auth/session')
+         .raise_for_status()
+         .json())
 
-    # TODO if response == {} raise exception
+    try:
+        if 'error' in r['user'] or r['user']['accessToken'] == '':
+            raise ValueError('ERROR: accessToken is invalid - cookies are expired')
 
-    response = response.json()
-    print(response['user']['accessToken'])
+        print('access token request success')
+        return r['user']['accessToken']
+    except KeyError:
+        raise KeyError('ERROR: accessToken is invalid - cookies are expired')
 
-    return response['user']['accessToken']
 
+def get_offers(client: httpx.Client, access_token: str):
+    r = (client.get('https://api-sell.wethenew.com/offers?take=10', headers=headers.get_offers_header(access_token))
+         .raise_for_status()
+         .json())
+
+    try:
+        print('offers: ', r['results'])
+        return r['results']
+    except KeyError:
+        raise KeyError('ERROR: offers list is empty')
+    
 
 def main():
     with httpx.Client() as client:
@@ -72,13 +89,15 @@ def main():
         client.cookies.update(cookies.restore_cookies())
 
         try:
-            accessToken = initial_request(client)
-        except httpx.HTTPStatusError as e:
+            access_token = initial_request(client)
+        except (ValueError, KeyError) as e:
             print(e)
 
-        get_offers = client.get("https://api-sell.wethenew.com/offers?take=10", headers=headers.get_offers_header(accessToken))
-        print(get_offers.text)
+        try:
+            get_offers(client, access_token)
+        except Exception as e:
+            print(e)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
