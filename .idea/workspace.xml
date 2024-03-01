@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="89e6f543-ee81-4efc-bc68-7b14aeb68a83" name="Changes" comment="saving cookies to file">
+    <list default="true" id="89e6f543-ee81-4efc-bc68-7b14aeb68a83" name="Changes" comment="clear cookies.json, session-token.txt reading deleted">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cookies.py" beforeDir="false" afterPath="$PROJECT_DIR$/cookies.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/session-token.txt" beforeDir="false" afterPath="$PROJECT_DIR$/session-token.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +85,7 @@
       <workItem from="1709214941435" duration="978000" />
       <workItem from="1709278723556" duration="44000" />
       <workItem from="1709288509237" duration="5585000" />
-      <workItem from="1709324219720" duration="3232000" />
+      <workItem from="1709324219720" duration="6640000" />
     </task>
     <task id="LOCAL-00001" summary="get offers">
       <option name="closed" value="true" />
@@ -112,7 +111,15 @@
       <option name="project" value="LOCAL" />
       <updated>1709325747570</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="clear cookies.json, session-token.txt reading deleted">
+      <option name="closed" value="true" />
+      <created>1709327796524</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1709327796524</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -133,10 +140,11 @@
     <MESSAGE value="get offers" />
     <MESSAGE value="file renamed" />
     <MESSAGE value="saving cookies to file" />
-    <option name="LAST_COMMIT_MESSAGE" value="saving cookies to file" />
+    <MESSAGE value="clear cookies.json, session-token.txt reading deleted" />
+    <option name="LAST_COMMIT_MESSAGE" value="clear cookies.json, session-token.txt reading deleted" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/wtn_monitor$cookies.coverage" NAME="cookies Coverage Results" MODIFIED="1709325079072" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/wtn_monitor$main.coverage" NAME="main Coverage Results" MODIFIED="1709327456543" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/wtn_monitor$main.coverage" NAME="main Coverage Results" MODIFIED="1709327497852" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
