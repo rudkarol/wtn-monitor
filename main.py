@@ -63,6 +63,9 @@ def initial_request(client: httpx.Client) -> str:
             raise ValueError('ERROR: accessToken is invalid - cookies are expired')
 
         print('access token request success')
+
+        cookies.save_cookies(client.cookies.jar)
+
         return r['user']['accessToken']
     except KeyError:
         raise KeyError('ERROR: accessToken is invalid - cookies are expired')
@@ -75,6 +78,9 @@ def get_offers(client: httpx.Client, access_token: str):
 
     try:
         print('offers: ', r['results'])
+
+        cookies.save_cookies(client.cookies.jar)
+
         return r['results']
     except KeyError:
         raise KeyError('ERROR: offers list is empty')
@@ -91,14 +97,16 @@ def main():
         try:
             access_token = initial_request(client)
         except (ValueError, KeyError) as e:
+            cookies.clear_cookies_file()
+            sys.exit(e)
+
+
+        try:
+            get_offers(client, access_token)
+        except Exception as e:
             print(e)
+            cookies.clear_cookies_file()
 
-        # try:
-        #     get_offers(client, access_token)
-        # except Exception as e:
-        #     print(e)
-
-        cookies.save_cookies(client.cookies.jar)
 
 
 if __name__ == '__main__':
