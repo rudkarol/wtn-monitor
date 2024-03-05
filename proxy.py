@@ -6,14 +6,14 @@ class Proxy:
     def __init__(self, host: str, port: str, username: str, password: str):
         self.requests_proxy = username + ':' + password + '@' + host + ':' + port
 
-    def getProxy(self) -> dict:
+    def get_proxy(self) -> dict[str, str]:
         return {
             'http': self.requests_proxy,
             'https': self.requests_proxy
         }
 
 
-def Load_proxies():
+def load_proxies() -> cycle:
     try:
         with open('proxies.txt', 'r') as proxies_file:
             proxy_list = []
@@ -34,5 +34,5 @@ def Load_proxies():
         sys.exit('ERROR - ' + str(e))
 
 
-def Rotate_proxy(session, proxies):
-    session.proxies.update(next(proxies).getProxy())
+def rotate_proxy(session, proxies):
+    session.proxies.update(next(proxies).get_proxy())

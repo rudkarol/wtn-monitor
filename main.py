@@ -1,12 +1,11 @@
 import pickle
 import httpx
 import csv
-import json
 import sys
 
 import cookies
 import headers
-from proxy import Load_proxies, Rotate_proxy
+from proxy import load_proxies, rotate_proxy
 
 
 def read_acceptable_offers() -> dict[int, int]:

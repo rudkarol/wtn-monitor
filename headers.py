@@ -1,4 +1,4 @@
-def get_offers_header(access_token: str) -> dict:
+def get_offers_header(access_token: str) -> dict[str, str]:
     return {
         'authority': 'api-sell.wethenew.com',
         'accept': 'application/json, text/plain, */*',
@@ -19,7 +19,7 @@ def get_offers_header(access_token: str) -> dict:
     }
 
 
-def accept_offer_header(access_token: str) -> dict:
+def accept_offer_header(access_token: str) -> dict[str, str]:
     return {
         'Accept': 'application/json, text/plain, */*',
         'Accept-Encoding': 'gzip, deflate, br',

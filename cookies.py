@@ -1,5 +1,4 @@
 import json
-import sys
 
 from http.cookiejar import CookieJar
 
@@ -9,7 +8,7 @@ def clear_cookies_file():
         json.dump({'__Secure-next-auth.session-token': ''}, cookies_file)
 
 
-def restore_cookies():
+def restore_cookies() -> dict[str, str]:
     try:
         with open('cookies.json', 'r') as cookies_file:
             return json.load(cookies_file)
@@ -19,7 +18,7 @@ def restore_cookies():
 
 
 def get_dict(self, domain=None, path=None):
-    dictionary = {}
+    dictionary: dict[str, str] = {}
 
     for cookie in iter(self):
         if (domain is None or cookie.domain == domain) and (path is None or cookie.path == path):
@@ -33,7 +32,6 @@ CookieJar.get_dict = get_dict
 
 def save_cookies(cookie_jar: CookieJar):
     cookies_dict = cookie_jar.get_dict()
-
 
     with open('cookies.json', 'w') as cookies_file:
         json.dump(cookies_dict, cookies_file)
