@@ -1,11 +1,11 @@
+import httpx
 from discord import Webhook, Embed, colour
 from datetime import datetime
-import httpx
 
 import settings
 
 
-def build_embed(offer: dict[str, str], title: str, color: int | colour | None) -> Embed:
+def build_embed(offer: dict[str, str], title: str, color: colour) -> Embed:
     embed = Embed(title=title, color=color, timestamp=datetime.utcnow())
 
     embed.add_field(name='ID', value=offer['id'], inline=False)

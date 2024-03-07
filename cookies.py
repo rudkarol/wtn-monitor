@@ -1,5 +1,4 @@
 import json
-
 from http.cookiejar import CookieJar
 
 

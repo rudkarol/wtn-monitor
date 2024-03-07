@@ -1,11 +1,14 @@
 import pickle
+import time
 import httpx
 import csv
 import sys
 
 import cookies
 import headers
+import settings
 from proxy import load_proxies, rotate_proxy
+from discord_webhook import accepted_webhook, offer_webhook
 
 
 def read_acceptable_offers() -> dict[int, int]:
@@ -30,10 +33,24 @@ def read_acceptable_offers() -> dict[int, int]:
         sys.exit('ERROR - ' + str(e))
 
 
-def save_offers(offers_dict):
+def read_recent_offers() -> dict[int, int]:
+    try:
+        with open('offers_IDs', 'rb') as file:
+            offers = pickle.load(file)
+            print('recent_offers_list: ', offers)
+
+            return offers
+    except FileNotFoundError:
+        with open('offers_IDs', 'wb'):
+            return {}
+    except Exception:
+        return {}
+
+
+def save_recent_offers(offers: dict[int, int]):
     try:
         with open('offers_IDs', 'wb') as file:
-            pickle.dump(offers_dict, file)
+            pickle.dump(offers, file)
     except Exception:
         pass
 
@@ -43,6 +60,7 @@ class Monitor:
         self.client = httpx.Client()
         self.access_token = ""
         self.acceptable_offers = read_acceptable_offers()
+        self.recent_offers = read_recent_offers()
 
     def initial_request(self) -> str:
         r = (self.client.get('https://sell.wethenew.com/api/auth/session')
@@ -61,35 +79,6 @@ class Monitor:
         except KeyError:
             raise KeyError('ERROR: accessToken is invalid - cookies are expired')
 
-    def review_offers(self, offers):
-        for offer in offers:
-            try:
-                if (offer['variantId'] in self.acceptable_offers) and (
-                        offer['price'] >= self.acceptable_offers[offer['variantId']]
-                ):
-                    self.accept_offer(offer)
-            except KeyError:
-                pass
-
-    def accept_offer(self, offer):
-        # TODO test
-        data = {
-            'name': offer['id'],
-            'status': "ACCEPTED",
-            'variantId': offer['variantId']
-        }
-
-        r = self.client.post(
-            'https://api-sell.wethenew.com/offers',
-            data=data,
-            headers=headers.accept_offer_header(self.access_token)
-        )
-
-        if r.status_code == httpx.codes.OK:
-            print('Offer ', offer['id'], 'accepted - status code:', str(r.status_code))
-        else:
-            print('Failed to accept offer ', offer['id'], '- status code:', str(r.status_code))
-
     def get_offers(self):
         r = (self.client.get('https://api-sell.wethenew.com/offers?take=10',
                              headers=headers.get_offers_header(self.access_token))
@@ -105,6 +94,40 @@ class Monitor:
         except KeyError:
             raise KeyError('ERROR: offers list is empty')
 
+    def review_offers(self, offers):
+        for offer in offers:
+            try:
+                if offer['variantId'] in self.acceptable_offers:
+                    if offer['price'] >= self.acceptable_offers[offer['variantId']]:
+                        self.accept_offer(offer)
+                    elif (offer['id'], offer['price']) not in self.recent_offers.items():
+                        offer_webhook(offer)
+
+                        self.recent_offers.update({offer['id']: offer['price']})
+                        save_recent_offers(self.recent_offers)
+            except KeyError:
+                pass
+
+    def accept_offer(self, offer: dict[str, str]):
+        data = {
+            'name': offer['id'],
+            'status': "ACCEPTED",
+            'variantId': offer['variantId']
+        }
+
+        r = self.client.post(
+            'https://api-sell.wethenew.com/offers',
+            data=data,
+            headers=headers.accept_offer_header(self.access_token)
+        )
+
+        if r.status_code == httpx.codes.OK:
+            print('Offer ', offer['id'], 'accepted - status code:', str(r.status_code))
+            accepted_webhook(offer)
+        else:
+            print('Failed to accept offer ', offer['id'], '- status code:', str(r.status_code))
+    #         TODO add failed webhook
+
     def start(self):
         self.client.cookies.update(cookies.restore_cookies())
 
@@ -114,13 +137,22 @@ class Monitor:
             cookies.clear_cookies_file()
             sys.exit(e)
 
-        try:
-            self.get_offers()
-        except (httpx.HTTPStatusError, KeyError) as e:
-            print(e)
-            cookies.clear_cookies_file()
+        while True:
+            try:
+                self.get_offers()
+            except (httpx.HTTPStatusError, KeyError) as e:
+                print(e)
+                cookies.clear_cookies_file()
+            except httpx.HTTPError:
+                pass
+            except httpx.ProxyError:
+                pass
+
+            time.sleep(settings.DELAY)
 
 
 if __name__ == '__main__':
     monitor = Monitor()
     monitor.start()
+
+# TODO handling multiple failed requests

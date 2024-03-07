@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="89e6f543-ee81-4efc-bc68-7b14aeb68a83" name="Changes" comment="small code improvements">
-      <change afterPath="$PROJECT_DIR$/discord_webhook.py" afterDir="false" />
+    <list default="true" id="89e6f543-ee81-4efc-bc68-7b14aeb68a83" name="Changes" comment="discord webhooks">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cookies.py" beforeDir="false" afterPath="$PROJECT_DIR$/cookies.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/discord_webhook.py" beforeDir="false" afterPath="$PROJECT_DIR$/discord_webhook.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -62,7 +63,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -87,7 +88,11 @@
       <workItem from="1709288509237" duration="5585000" />
       <workItem from="1709324219720" duration="6914000" />
       <workItem from="1709659501430" duration="7177000" />
-      <workItem from="1709676980533" duration="2285000" />
+      <workItem from="1709676980533" duration="3120000" />
+      <workItem from="1709680122411" duration="431000" />
+      <workItem from="1709720739023" duration="725000" />
+      <workItem from="1709835744801" duration="40000" />
+      <workItem from="1709835799979" duration="1313000" />
     </task>
     <task id="LOCAL-00001" summary="get offers">
       <option name="closed" value="true" />
@@ -145,7 +150,15 @@
       <option name="project" value="LOCAL" />
       <updated>1709662113340</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="discord webhooks">
+      <option name="closed" value="true" />
+      <created>1709679502632</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1709679502632</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -170,7 +183,8 @@
     <MESSAGE value="review offers and accept offer request" />
     <MESSAGE value="main.py code moved to Monitor class" />
     <MESSAGE value="small code improvements" />
-    <option name="LAST_COMMIT_MESSAGE" value="small code improvements" />
+    <MESSAGE value="discord webhooks" />
+    <option name="LAST_COMMIT_MESSAGE" value="discord webhooks" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/wtn_monitor$cookies.coverage" NAME="cookies Coverage Results" MODIFIED="1709661918872" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
