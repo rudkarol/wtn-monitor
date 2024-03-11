@@ -1,19 +1,20 @@
 import sys
-from itertools import cycle
+
+from httpx import HTTPTransport
 
 
 class Proxy:
     def __init__(self, host: str, port: str, username: str, password: str):
-        self.requests_proxy = username + ':' + password + '@' + host + ':' + port
+        self.proxy = username + ':' + password + '@' + host + ':' + port
 
-    def get_proxy(self) -> dict[str, str]:
+    def get_proxy(self) -> dict[str, HTTPTransport]:
         return {
-            'http': self.requests_proxy,
-            'https': self.requests_proxy
+            'http://': HTTPTransport(proxy='http://' + self.proxy),
+            'https://': HTTPTransport(proxy='https://' + self.proxy)
         }
 
 
-def load_proxies() -> cycle:
+def load_proxies() -> list[Proxy]:
     try:
         with open('proxies.txt', 'r') as proxies_file:
             proxy_list = []
@@ -24,7 +25,7 @@ def load_proxies() -> cycle:
                     Proxy(host, port, username, password)
                 )
 
-            return cycle(proxy_list)
+            return proxy_list
     except FileNotFoundError:
         with open('proxies.txt', 'w'):
             pass
@@ -32,7 +33,3 @@ def load_proxies() -> cycle:
         sys.exit('ERROR - proxies.txt file does not exist! File created')
     except Exception as e:
         sys.exit('ERROR - ' + str(e))
-
-
-def rotate_proxy(session, proxies):
-    session.proxies.update(next(proxies).get_proxy())

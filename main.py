@@ -4,10 +4,12 @@ import httpx
 import csv
 import sys
 
+from random import choice
+
 import cookies
 import headers
 import settings
-from proxy import load_proxies, rotate_proxy
+from proxy import load_proxies
 from discord_webhook import accepted_webhook, offer_webhook
 
 
@@ -57,10 +59,17 @@ def save_recent_offers(offers: dict[int, int]):
 
 class Monitor:
     def __init__(self):
-        self.client = httpx.Client()
+        self.proxies = load_proxies()
+        self.clients_pool: list[httpx.Client] = []
+        self.client = None
         self.access_token = ""
+        self.cookies = cookies.restore_cookies()
         self.acceptable_offers = read_acceptable_offers()
         self.recent_offers = read_recent_offers()
+
+        for proxy in self.proxies:
+            c = httpx.Client(mounts=proxy.get_proxy())
+            self.clients_pool.append(c)
 
     def initial_request(self) -> str:
         r = (self.client.get('https://sell.wethenew.com/api/auth/session')
@@ -129,17 +138,23 @@ class Monitor:
     #         TODO add failed webhook
 
     def start(self):
-        self.client.cookies.update(cookies.restore_cookies())
-
         try:
+            self.client = choice(self.clients_pool)
+            self.client.cookies = self.cookies
             self.access_token = self.initial_request()
+            self.cookies = self.client.cookies.jar
         except (ValueError, KeyError) as e:
             cookies.clear_cookies_file()
             sys.exit(e)
 
+        time.sleep(settings.DELAY)
+
         while True:
             try:
+                self.client = choice(self.clients_pool)
+                self.client.cookies = self.cookies
                 self.get_offers()
+                self.cookies = self.client.cookies.jar
             except (httpx.HTTPStatusError, KeyError) as e:
                 print(e)
                 cookies.clear_cookies_file()
