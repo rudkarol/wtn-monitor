@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="89e6f543-ee81-4efc-bc68-7b14aeb68a83" name="Changes" comment="read recent offers">
+    <list default="true" id="89e6f543-ee81-4efc-bc68-7b14aeb68a83" name="Changes" comment="clients pool">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/discord_webhook.py" beforeDir="false" afterPath="$PROJECT_DIR$/discord_webhook.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proxies.txt" beforeDir="false" afterPath="$PROJECT_DIR$/proxies.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/proxy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/wtn_acceptable.csv" beforeDir="false" afterPath="$PROJECT_DIR$/wtn_acceptable.csv" afterDir="false" />
     </list>
@@ -100,7 +98,7 @@
       <workItem from="1709835799979" duration="1615000" />
       <workItem from="1709883376357" duration="10000" />
       <workItem from="1709885238242" duration="4000" />
-      <workItem from="1710167643260" duration="6634000" />
+      <workItem from="1710167643260" duration="9467000" />
     </task>
     <task id="LOCAL-00001" summary="get offers">
       <option name="closed" value="true" />
@@ -174,7 +172,15 @@
       <option name="project" value="LOCAL" />
       <updated>1709837410720</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="clients pool">
+      <option name="closed" value="true" />
+      <created>1710177537874</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1710177537875</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -201,11 +207,12 @@
     <MESSAGE value="small code improvements" />
     <MESSAGE value="discord webhooks" />
     <MESSAGE value="read recent offers" />
-    <option name="LAST_COMMIT_MESSAGE" value="read recent offers" />
+    <MESSAGE value="clients pool" />
+    <option name="LAST_COMMIT_MESSAGE" value="clients pool" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/wtn_monitor$cookies.coverage" NAME="cookies Coverage Results" MODIFIED="1709661918872" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/wtn_monitor$discord_webhook.coverage" NAME="discord_webhook Coverage Results" MODIFIED="1710168671808" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/wtn_monitor$main.coverage" NAME="main Coverage Results" MODIFIED="1710177336474" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/wtn_monitor$main.coverage" NAME="main Coverage Results" MODIFIED="1710185643032" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
