@@ -22,7 +22,7 @@ def read_acceptable_offers() -> dict[int, int]:
             for row in reader:
                 acceptable_dict.update({int(row['PID']): int(row['MIN_PRICE'])})
 
-            print('acceptable_dict: ', acceptable_dict)
+            print(f'acceptable offers : {acceptable_dict}')
 
             return acceptable_dict
     except FileNotFoundError:
@@ -39,7 +39,7 @@ def read_recent_offers() -> dict[int, int]:
     try:
         with open('offers_IDs', 'rb') as file:
             offers = pickle.load(file)
-            print('recent_offers_list: ', offers)
+            print(f'recent offers: {offers}')
 
             return offers
     except FileNotFoundError:
@@ -80,7 +80,7 @@ class Monitor:
             if 'error' in r['user'] or r['user']['accessToken'] == '':
                 raise ValueError('ERROR: accessToken is invalid - cookies are expired')
 
-            print('access token request success')
+            print('initial request success')
 
             cookies.save_cookies(self.client.cookies.jar)
 
@@ -95,7 +95,7 @@ class Monitor:
              .json())
 
         try:
-            print('offers: ', r['results'])
+            print(f'offers: {r["results"]}')
 
             cookies.save_cookies(self.client.cookies.jar)
 
@@ -131,10 +131,10 @@ class Monitor:
         )
 
         if r.status_code == httpx.codes.OK:
-            print('Offer ', offer['id'], 'accepted - status code:', str(r.status_code))
+            print(f'Offer {offer["id"]} accepted - status code: {r.status_code}')
             accepted_webhook(offer)
         else:
-            print('Failed to accept offer ', offer['id'], '- status code:', str(r.status_code))
+            print(f'Failed to accept offer {offer["id"]} - status code: {r.status_code}')
     #         TODO add failed webhook
 
     def start(self):
@@ -156,6 +156,7 @@ class Monitor:
                 self.get_offers()
                 self.cookies = self.client.cookies.jar
             except (httpx.HTTPStatusError, KeyError) as e:
+                # TODO clear cookies file only for 429
                 print(e)
                 cookies.clear_cookies_file()
             except httpx.HTTPError:
