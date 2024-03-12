@@ -1,3 +1,4 @@
+import datetime
 import pickle
 import time
 import httpx
@@ -80,7 +81,7 @@ class Monitor:
             if 'error' in r['user'] or r['user']['accessToken'] == '':
                 raise ValueError('ERROR: accessToken is invalid - cookies are expired')
 
-            print('initial request success')
+            print(f'{datetime.datetime.now().strftime("%H:%M:%S")} initial request success')
 
             cookies.save_cookies(self.client.cookies.jar)
 
@@ -89,13 +90,15 @@ class Monitor:
             raise KeyError('ERROR: accessToken is invalid - cookies are expired')
 
     def get_offers(self):
-        r = (self.client.get('https://api-sell.wethenew.com/offers?take=10',
-                             headers=headers.get_offers_header(self.access_token))
-             .raise_for_status()
-             .json())
+        r = (self.client.get(
+            'https://api-sell.wethenew.com/offers?take=10',
+            headers=headers.get_offers_header(self.access_token))
+            .raise_for_status()
+            .json()
+        )
 
         try:
-            print(f'offers: {r["results"]}')
+            print(f'{datetime.datetime.now().strftime("%H:%M:%S")} offers: {r["results"]}')
 
             cookies.save_cookies(self.client.cookies.jar)
 
@@ -126,14 +129,14 @@ class Monitor:
 
         r = self.client.post(
             'https://api-sell.wethenew.com/offers',
-            data=data,
+            json=data,
             headers=headers.accept_offer_header(self.access_token)
         )
 
-        if r.status_code == httpx.codes.OK:
+        if r.status_code == 201:
             print(f'Offer {offer["id"]} accepted - status code: {r.status_code}')
             accepted_webhook(offer)
-        else:
+        elif r.status_code != httpx.codes.OK:
             print(f'Failed to accept offer {offer["id"]} - status code: {r.status_code}')
     #         TODO add failed webhook
 
