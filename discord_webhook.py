@@ -36,6 +36,13 @@ def offer_webhook(offer: dict[str, str]):
     asyncio.run(send_webhook(embed=embed))
 
 
+def failed_webhook(offer: dict[str, str]):
+    title = 'Failed to accept offer - ' + offer['name']
+    embed = build_embed(offer=offer, title=title, color=0xff2b2b)
+
+    asyncio.run(send_webhook(embed=embed))
+
+
 async def send_webhook(embed: Embed):
     async with ClientSession() as client:
         webhook = Webhook.from_url(url=settings.WEBHOOK_URL, session=client)

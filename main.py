@@ -11,7 +11,7 @@ import cookies
 import headers
 import settings
 from proxy import load_proxies
-from discord_webhook import accepted_webhook, offer_webhook
+from discord_webhook import accepted_webhook, offer_webhook, failed_webhook
 
 
 def read_acceptable_offers() -> dict[int, int]:
@@ -138,7 +138,7 @@ class Monitor:
             accepted_webhook(offer)
         elif r.status_code != httpx.codes.OK:
             print(f'Failed to accept offer {offer["id"]} - status code: {r.status_code}')
-    #         TODO add failed webhook
+            failed_webhook(offer)
 
     def start(self):
         try:
