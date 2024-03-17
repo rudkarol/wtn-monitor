@@ -22,7 +22,7 @@ def read_acceptable_offers() -> dict[int, int]:
             reader = csv.DictReader(csvfile)
 
             for row in reader:
-                acceptable_dict.update({int(row['PID']): int(row['MIN_PRICE'])})
+                acceptable_dict.update({int(row[slice('PID')]): int(row[slice('MIN_PRICE')])})
 
             print(f'acceptable offers : {acceptable_dict}')
 
@@ -57,6 +57,19 @@ def save_recent_offers(offers: dict[int, int]):
             pickle.dump(offers, file)
     except Exception:
         pass
+
+
+def multiple_failed_requests(count: int, proxies_len: int):
+    count += 1
+
+    if count > 15 or proxies_len:
+        stop_monitor('Too many failed requests. Check proxies, login and fill out the cookies.json file')
+
+
+def stop_monitor(mess: str):
+    cookies.clear_cookies_file()
+    discord_webhook.error_webhook(f'MONITOR STOPPED! - {mess}')
+    sys.exit(f'ERROR - {mess}')
 
 
 class Monitor:
@@ -150,19 +163,16 @@ class Monitor:
             failed_webhook(offer)
 
     def start(self):
+        failed_requests = 0
+
         try:
             self.client = choice(self.clients_pool)
             self.client.cookies = self.cookies
             self.access_token = self.initial_request()
             self.cookies = self.client.cookies.jar
         except (ValueError, KeyError, httpx.HTTPStatusError) as e:
-            cookies.clear_cookies_file()
-
-            discord_webhook.error_webhook(
-                'MONITOR STOPPED! - session expired. Login and fill out the cookies.json file')
-
             print(e)
-            sys.exit('ERROR - session expired, cookies.json file has been cleared')
+            stop_monitor('Session expired. Login and fill out the cookies.json file')
 
         time.sleep(settings.DELAY)
 
@@ -174,13 +184,12 @@ class Monitor:
                 self.cookies = self.client.cookies.jar
             except httpx.HTTPStatusError as e:
                 if e.response.status_code == 429:
-                    cookies.clear_cookies_file()
-                    discord_webhook.error_webhook(
-                        'MONITOR STOPPED! - session expired. Login and fill out the cookies.json file')
-                    sys.exit('ERROR - session expired, cookies.json file has been cleared')
+                    stop_monitor('Session expired. Login and fill out the cookies.json file')
+                else:
+                    multiple_failed_requests(failed_requests, len(self.proxies))
             except Exception as e:
-                # TODO handling multiple failed requests
                 print(e)
+                multiple_failed_requests(failed_requests, len(self.proxies))
 
             time.sleep(settings.DELAY)
 
