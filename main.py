@@ -8,6 +8,7 @@ import sys
 from random import choice
 
 import cookies
+import discord_webhook
 import headers
 import settings
 from proxy import load_proxies
@@ -100,9 +101,9 @@ class Monitor:
         try:
             print(f'{datetime.datetime.now().strftime("%H:%M:%S")} offers: {r["results"]}')
 
-            cookies.save_cookies(self.client.cookies.jar)
-
             self.review_offers(r['results'])
+
+            cookies.save_cookies(self.client.cookies.jar)
         except KeyError:
             raise KeyError('ERROR: offers list is empty')
 
@@ -158,14 +159,14 @@ class Monitor:
                 self.client.cookies = self.cookies
                 self.get_offers()
                 self.cookies = self.client.cookies.jar
-            except (httpx.HTTPStatusError, KeyError) as e:
-                # TODO clear cookies file only for 429
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 429:
+                    cookies.clear_cookies_file()
+                    discord_webhook.error_webhook(
+                        'MONITOR STOPPED! - session expired. Login and fill out the cookies.json file')
+                    sys.exit('ERROR - session expired, cookies.json file has been cleared')
+            except Exception as e:
                 print(e)
-                cookies.clear_cookies_file()
-            except httpx.HTTPError:
-                pass
-            except httpx.ProxyError:
-                pass
 
             time.sleep(settings.DELAY)
 
