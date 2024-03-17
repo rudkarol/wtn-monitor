@@ -22,23 +22,23 @@ def build_embed(offer: dict[str, str], title: str, color: colour) -> Embed:
     return embed
 
 
-def accepted_webhook(offer: dict[str, str]):
-    title = 'Offer accepted! - ' + offer['name']
-    embed = build_embed(offer=offer, title=title, color=0x00c703)
+def accepted_webhook(data: dict[str, str], additional_mess: str = ''):
+    title = 'Offer accepted! - ' + data['name'] + additional_mess
+    embed = build_embed(offer=data, title=title, color=0x00c703)
 
     asyncio.run(send_webhook(embed=embed))
 
 
-def offer_webhook(offer: dict[str, str]):
-    title = 'New offer - ' + offer['name']
-    embed = build_embed(offer=offer, title=title, color=0xbfbfbf)
+def offer_webhook(data: dict[str, str]):
+    title = 'New offer - ' + data['name']
+    embed = build_embed(offer=data, title=title, color=0xbfbfbf)
 
     asyncio.run(send_webhook(embed=embed))
 
 
-def failed_webhook(offer: dict[str, str]):
-    title = 'Failed to accept offer - ' + offer['name']
-    embed = build_embed(offer=offer, title=title, color=0xff2b2b)
+def failed_webhook(data: dict[str, str]):
+    title = 'Failed to accept offer - ' + data['name']
+    embed = build_embed(offer=data, title=title, color=0xff2b2b)
 
     asyncio.run(send_webhook(embed=embed))
 
@@ -50,6 +50,9 @@ def error_webhook(mess: str):
 
 
 async def send_webhook(embed: Embed):
-    async with ClientSession() as client:
-        webhook = Webhook.from_url(url=settings.WEBHOOK_URL, session=client)
-        await webhook.send(embed=embed)
+    try:
+        async with ClientSession() as client:
+            webhook = Webhook.from_url(url=settings.WEBHOOK_URL, session=client)
+            await webhook.send(embed=embed)
+    except Exception:
+        pass

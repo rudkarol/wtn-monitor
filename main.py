@@ -94,9 +94,9 @@ class Monitor:
         r = (self.client.get(
             'https://api-sell.wethenew.com/offers?take=10',
             headers=headers.get_offers_header(self.access_token))
-            .raise_for_status()
-            .json()
-        )
+             .raise_for_status()
+             .json()
+             )
 
         try:
             print(f'{datetime.datetime.now().strftime("%H:%M:%S")} offers: {r["results"]}')
@@ -119,7 +119,7 @@ class Monitor:
                         self.recent_offers.update({offer['id']: offer['price']})
                         save_recent_offers(self.recent_offers)
             except KeyError:
-                pass
+                print('ERROR: the offer is incorrect')
 
     def accept_offer(self, offer: dict[str, str]):
         data = {
@@ -135,8 +135,16 @@ class Monitor:
         )
 
         if r.status_code == 201:
-            print(f'Offer {offer["id"]} accepted - status code: {r.status_code}')
+            print(f'Offer {offer["id"]} accepted')
             accepted_webhook(offer)
+        elif r.status_code == httpx.codes.OK:
+            print(f'Offer {offer["id"]} accepted, - status code: {r.status_code}'
+                  '\nCheck the sales tab on wtn to make sure the offer has been accepted.')
+
+            accepted_webhook(
+                offer,
+                additional_mess='\nCheck the sales tab on wtn to make sure the offer has been accepted'
+            )
         elif r.status_code != httpx.codes.OK:
             print(f'Failed to accept offer {offer["id"]} - status code: {r.status_code}')
             failed_webhook(offer)
@@ -147,9 +155,14 @@ class Monitor:
             self.client.cookies = self.cookies
             self.access_token = self.initial_request()
             self.cookies = self.client.cookies.jar
-        except (ValueError, KeyError) as e:
+        except (ValueError, KeyError, httpx.HTTPStatusError) as e:
             cookies.clear_cookies_file()
-            sys.exit(e)
+
+            discord_webhook.error_webhook(
+                'MONITOR STOPPED! - session expired. Login and fill out the cookies.json file')
+
+            print(e)
+            sys.exit('ERROR - session expired, cookies.json file has been cleared')
 
         time.sleep(settings.DELAY)
 
@@ -166,6 +179,7 @@ class Monitor:
                         'MONITOR STOPPED! - session expired. Login and fill out the cookies.json file')
                     sys.exit('ERROR - session expired, cookies.json file has been cleared')
             except Exception as e:
+                # TODO handling multiple failed requests
                 print(e)
 
             time.sleep(settings.DELAY)
@@ -174,5 +188,3 @@ class Monitor:
 if __name__ == '__main__':
     monitor = Monitor()
     monitor.start()
-
-# TODO handling multiple failed requests
