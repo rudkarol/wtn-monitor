@@ -22,7 +22,7 @@ def read_acceptable_offers() -> dict[int, int]:
             reader = csv.DictReader(csvfile)
 
             for row in reader:
-                acceptable_dict.update({int(row[slice('PID')]): int(row[slice('MIN_PRICE')])})
+                acceptable_dict.update({int(row['PID']): int(row['MIN_PRICE'])})
 
             print(f'acceptable offers : {acceptable_dict}')
 
@@ -66,8 +66,10 @@ def multiple_failed_requests(count: int, proxies_len: int):
         stop_monitor('Too many failed requests. Check proxies, login and fill out the cookies.json file')
 
 
-def stop_monitor(mess: str):
-    cookies.clear_cookies_file()
+def stop_monitor(mess: str, clear_cookies: bool = True):
+    if clear_cookies:
+        cookies.clear_cookies_file()
+
     discord_webhook.error_webhook(f'MONITOR STOPPED! - {mess}')
     sys.exit(f'ERROR - {mess}')
 
@@ -170,9 +172,10 @@ class Monitor:
             self.client.cookies = self.cookies
             self.access_token = self.initial_request()
             self.cookies = self.client.cookies.jar
-        except (ValueError, KeyError, httpx.HTTPStatusError) as e:
-            print(e)
+        except (ValueError, KeyError, httpx.HTTPStatusError):
             stop_monitor('Session expired. Login and fill out the cookies.json file')
+        except Exception as e:
+            stop_monitor(str(e), False)
 
         time.sleep(settings.DELAY)
 
@@ -184,7 +187,7 @@ class Monitor:
                 self.cookies = self.client.cookies.jar
             except httpx.HTTPStatusError as e:
                 if e.response.status_code == 429:
-                    stop_monitor('Session expired. Login and fill out the cookies.json file')
+                    stop_monitor('Session expired (429). Login and fill out the cookies.json file')
                 else:
                     multiple_failed_requests(failed_requests, len(self.proxies))
             except Exception as e:

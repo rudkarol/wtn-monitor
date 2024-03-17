@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="89e6f543-ee81-4efc-bc68-7b14aeb68a83" name="Changes" comment="exceptions handling">
+    <list default="true" id="89e6f543-ee81-4efc-bc68-7b14aeb68a83" name="Changes" comment="multiple failed requests handling">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/discord_webhook.py" beforeDir="false" afterPath="$PROJECT_DIR$/discord_webhook.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proxies.txt" beforeDir="false" afterPath="$PROJECT_DIR$/proxies.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/settings.py" afterDir="false" />
@@ -105,7 +106,7 @@
       <workItem from="1710332534039" duration="315000" />
       <workItem from="1710488085895" duration="49000" />
       <workItem from="1710493047034" duration="1703000" />
-      <workItem from="1710674491306" duration="4137000" />
+      <workItem from="1710674491306" duration="5821000" />
     </task>
     <task id="LOCAL-00001" summary="get offers">
       <option name="closed" value="true" />
@@ -243,7 +244,15 @@
       <option name="project" value="LOCAL" />
       <updated>1710677306789</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="multiple failed requests handling">
+      <option name="closed" value="true" />
+      <created>1710678791187</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1710678791187</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -277,11 +286,12 @@
     <MESSAGE value="failed webhook" />
     <MESSAGE value="error webhook" />
     <MESSAGE value="exceptions handling" />
-    <option name="LAST_COMMIT_MESSAGE" value="exceptions handling" />
+    <MESSAGE value="multiple failed requests handling" />
+    <option name="LAST_COMMIT_MESSAGE" value="multiple failed requests handling" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/wtn_monitor$cookies.coverage" NAME="cookies Coverage Results" MODIFIED="1709661918872" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/wtn_monitor$discord_webhook.coverage" NAME="discord_webhook Coverage Results" MODIFIED="1710168671808" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/wtn_monitor$main.coverage" NAME="main Coverage Results" MODIFIED="1710263670559" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/wtn_monitor$main.coverage" NAME="main Coverage Results" MODIFIED="1710680284896" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

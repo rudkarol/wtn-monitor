@@ -44,7 +44,7 @@ def failed_webhook(data: dict[str, str]):
 
 
 def error_webhook(mess: str):
-    embed = Embed(title=mess, color=0xff2b2b, timestamp=datetime.utcnow().strptime("%Y-%m-%dT%H:%M:%S.%fZ"))
+    embed = Embed(title=mess, color=0xff2b2b, timestamp=datetime.utcnow())
 
     asyncio.run(send_webhook(embed=embed))
 
