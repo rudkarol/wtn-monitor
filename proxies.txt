@@ -1,7 +1,0 @@
-proxy0:port:username:password
-proxy1:port:username:password
-proxy2:port:username:password
-proxy3:port:username:password
-proxy4:port:username:password
-proxy5:port:username:password
-proxy6:port:username:password
