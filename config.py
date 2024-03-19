@@ -26,8 +26,12 @@ class Config:
                 yaml.dump(data, cookies_file)
 
             raise FileNotFoundError('config.yaml file does not exist! File created')
+        except PermissionError:
+            raise PermissionError('delete the config.yaml file and start the monitor, then fill in the config file')
         except KeyError:
             raise KeyError('config.yaml file contains incorrect data')
+        except EOFError:
+            raise EOFError('config.yaml file is empty. Delete the file and start the monitor, then fill in the config file')
 
     def get_webhook_url(self):
         return self.webhook_url

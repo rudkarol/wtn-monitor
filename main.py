@@ -40,6 +40,8 @@ def read_recent_offers() -> dict[int, int]:
             return pickle.load(file)
     except (EOFError, FileNotFoundError):
         pass
+    except PermissionError:
+        raise PermissionError('delete the "offers_IDs" file')
 
     return {}
 
@@ -55,10 +57,10 @@ class Monitor:
         self.clients_pool: list[httpx.Client] = []
         self.access_token = ""
 
-        self.recent_offers = read_recent_offers()
-        print(f'recent offers: {self.recent_offers}')
-
         try:
+            self.recent_offers = read_recent_offers()
+            print(f'recent offers: {self.recent_offers}')
+
             self.acceptable_offers = read_acceptable_offers()
             self.proxies = load_proxies()
 
@@ -71,7 +73,7 @@ class Monitor:
             if not self.cookies:
                 self.cookies = monitor_config.get_token()
 
-        except (FileNotFoundError, KeyError, ValueError) as e:
+        except (FileNotFoundError, KeyError, ValueError, PermissionError, EOFError) as e:
             sys.exit(e)
 
         for proxy in self.proxies:

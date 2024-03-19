@@ -29,3 +29,7 @@ def load_proxies() -> list[Proxy]:
             pass
 
         raise FileNotFoundError('proxies.txt file does not exist! File created')
+    except PermissionError:
+        raise PermissionError('delete the proxies.txt file and start the monitor, then fill in the file')
+    except EOFError:
+        raise EOFError('proxies.txt file is empty')

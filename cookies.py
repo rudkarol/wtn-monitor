@@ -13,6 +13,9 @@ def restore_cookies() -> dict[str, str]:
             return pickle.load(cookies_file)
     except FileNotFoundError:
         return {}
+    except PermissionError:
+        raise PermissionError('delete the "cookies" file')
+
 
 
 def get_dict(self, domain=None, path=None):
