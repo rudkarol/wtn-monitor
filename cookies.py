@@ -12,7 +12,6 @@ def restore_cookies() -> dict[str, str]:
         with open('cookies', 'rb') as cookies_file:
             return pickle.load(cookies_file)
     except FileNotFoundError:
-        clear_cookies_file()
         return {}
 
 

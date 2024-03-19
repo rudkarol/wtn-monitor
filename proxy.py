@@ -1,5 +1,3 @@
-import sys
-
 from httpx import HTTPTransport
 
 
@@ -30,6 +28,4 @@ def load_proxies() -> list[Proxy]:
         with open('proxies.txt', 'w'):
             pass
 
-        sys.exit('ERROR - proxies.txt file does not exist! File created')
-    except Exception as e:
-        sys.exit('ERROR - ' + str(e))
+        raise FileNotFoundError('proxies.txt file does not exist! File created')

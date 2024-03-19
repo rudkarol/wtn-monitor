@@ -31,23 +31,17 @@ def read_acceptable_offers() -> dict[int, int]:
             writer = csv.DictWriter(csvfile, fieldnames=['SKU', 'NAME', 'PID', 'MIN_PRICE'])
             writer.writeheader()
 
-        sys.exit('ERROR - wtn_acceptable.csv file does not exist! File created')
-    except Exception as e:
-        sys.exit('ERROR - ' + str(e))
+        raise FileNotFoundError('wtn_acceptable.csv file does not exist! File created')
 
 
 def read_recent_offers() -> dict[int, int]:
     try:
         with open('offers_IDs', 'rb') as file:
-            offers = pickle.load(file)
-            print(f'recent offers: {offers}')
+            return pickle.load(file)
+    except (EOFError, FileNotFoundError):
+        pass
 
-            return offers
-    except FileNotFoundError:
-        with open('offers_IDs', 'wb'):
-            return {}
-    except Exception:
-        return {}
+    return {}
 
 
 def save_recent_offers(offers: dict[int, int]):
@@ -57,58 +51,75 @@ def save_recent_offers(offers: dict[int, int]):
 
 class Monitor:
     def __init__(self):
-        self.proxies = load_proxies()
-        self.clients_pool: list[httpx.Client] = []
         self.client = None
+        self.clients_pool: list[httpx.Client] = []
         self.access_token = ""
-        self.acceptable_offers = read_acceptable_offers()
+
         self.recent_offers = read_recent_offers()
+        print(f'recent offers: {self.recent_offers}')
 
-        monitor_config = config.Config()
-        self.delay = monitor_config.get_delay()
-        self.webhook_url = monitor_config.get_webhook_url()
-        self.cookies = cookies.restore_cookies()
+        try:
+            self.acceptable_offers = read_acceptable_offers()
+            self.proxies = load_proxies()
 
-        if not self.cookies:
-            self.cookies = monitor_config.get_token()
+            monitor_config = config.Config()
+            self.delay = monitor_config.get_delay()
+            self.webhook_url = monitor_config.get_webhook_url()
+
+            self.cookies = cookies.restore_cookies()
+
+            if not self.cookies:
+                self.cookies = monitor_config.get_token()
+
+        except (FileNotFoundError, KeyError, ValueError) as e:
+            sys.exit(e)
 
         for proxy in self.proxies:
             c = httpx.Client(mounts=proxy.get_proxy())
             self.clients_pool.append(c)
 
     def initial_request(self) -> str:
+        self.client = choice(self.clients_pool)
+        self.client.cookies = self.cookies
+
         r = (self.client.get('https://sell.wethenew.com/api/auth/session')
              .raise_for_status()
              .json())
 
         try:
             if 'error' in r['user'] or r['user']['accessToken'] == '':
-                raise ValueError('ERROR: accessToken is invalid - cookies are expired')
-
-            print(f'{datetime.datetime.now().strftime("%H:%M:%S")} initial request success')
-
-            cookies.save_cookies(self.client.cookies.jar)
-
-            return r['user']['accessToken']
+                raise ValueError('accessToken is invalid - cookies are expired')
         except KeyError:
-            raise KeyError('ERROR: accessToken is invalid - cookies are expired')
+            raise KeyError('accessToken is invalid - cookies are expired')
+
+        self.cookies = self.client.cookies.jar
+        cookies.save_cookies(self.client.cookies.jar)
+
+        print(f'{datetime.datetime.now().strftime("%H:%M:%S")} initial request success')
+
+        return r['user']['accessToken']
 
     def get_offers(self):
+        self.client = choice(self.clients_pool)
+        self.client.cookies = self.cookies
+
         r = (self.client.get(
-            'https://api-sell.wethenew.com/offers?take=10',
+            url='https://api-sell.wethenew.com/offers?take=10',
             headers=headers.get_offers_header(self.access_token))
              .raise_for_status()
-             .json()
-             )
+             .json())
 
         try:
             print(f'{datetime.datetime.now().strftime("%H:%M:%S")} offers: {r["results"]}')
 
             self.review_offers(r['results'])
-
-            cookies.save_cookies(self.client.cookies.jar)
         except KeyError:
-            raise KeyError('ERROR: offers list is empty')
+            raise KeyError('offers list is empty')
+        except ValueError:
+            raise
+
+        self.cookies = self.client.cookies.jar
+        cookies.save_cookies(self.client.cookies.jar)
 
     def review_offers(self, offers):
         for offer in offers:
@@ -122,7 +133,7 @@ class Monitor:
                         self.recent_offers.update({offer['id']: offer['price']})
                         save_recent_offers(self.recent_offers)
             except KeyError:
-                print('ERROR: the offer is incorrect')
+                raise ValueError('the offer is incorrect')
 
     def accept_offer(self, offer: dict[str, str]):
         data = {
@@ -161,40 +172,35 @@ class Monitor:
         sys.exit(f'ERROR - {mess}')
 
     def multiple_failed_requests(self, count: int, proxies_len: int):
+        # TODO fix
         count += 1
 
         if count > 15 or proxies_len:
-            self.stop_monitor('Too many failed requests. Check proxies, login and fill out the cookies.json file')
+            self.stop_monitor('Too many failed requests', False)
 
     def start(self):
         failed_requests = 0
 
         try:
-            self.client = choice(self.clients_pool)
-            self.client.cookies = self.cookies
             self.access_token = self.initial_request()
-            self.cookies = self.client.cookies.jar
         except (ValueError, KeyError, httpx.HTTPStatusError):
-            self.stop_monitor('Session expired. Login and fill out the cookies.json file')
-        except Exception as e:
-            self.stop_monitor(str(e), False)
+            self.stop_monitor('Session expired. Login and update the session token in the config.yaml file')
 
         time.sleep(self.delay)
 
         while True:
             try:
-                self.client = choice(self.clients_pool)
-                self.client.cookies = self.cookies
                 self.get_offers()
-                self.cookies = self.client.cookies.jar
             except httpx.HTTPStatusError as e:
                 if e.response.status_code == 429:
-                    self.stop_monitor('Session expired (429). Login and fill out the cookies.json file')
+                    self.stop_monitor('Session expired (429). Login and update the session token in the config.yaml file')
                 else:
                     self.multiple_failed_requests(failed_requests, len(self.proxies))
-            except Exception as e:
+            except httpx.HTTPError as e:
                 print(e)
                 self.multiple_failed_requests(failed_requests, len(self.proxies))
+            except (KeyError, ValueError) as e:
+                print(e)
 
             time.sleep(self.delay)
 

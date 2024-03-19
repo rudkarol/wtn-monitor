@@ -1,10 +1,7 @@
 import asyncio
-
 from discord import Webhook, Embed, colour
 from datetime import datetime
 from aiohttp import ClientSession
-
-import config
 
 
 def build_embed(offer: dict[str, str], title: str, color: colour) -> Embed:
@@ -23,22 +20,31 @@ def build_embed(offer: dict[str, str], title: str, color: colour) -> Embed:
 
 
 def accepted_webhook(data: dict[str, str], url: str, additional_mess: str = ''):
-    title = 'Offer accepted! - ' + data['name'] + additional_mess
-    embed = build_embed(offer=data, title=title, color=0x00c703)
+    embed = build_embed(
+        offer=data,
+        title='Offer accepted! - ' + data['name'] + additional_mess,
+        color=0x00c703
+    )
 
     asyncio.run(send_webhook(embed, url))
 
 
 def offer_webhook(data: dict[str, str], url: str):
-    title = 'New offer - ' + data['name']
-    embed = build_embed(offer=data, title=title, color=0xbfbfbf)
+    embed = build_embed(
+        offer=data,
+        title='New offer - ' + data['name'],
+        color=0xbfbfbf
+    )
 
     asyncio.run(send_webhook(embed, url))
 
 
 def failed_webhook(data: dict[str, str], url: str):
-    title = 'Failed to accept offer - ' + data['name']
-    embed = build_embed(offer=data, title=title, color=0xff2b2b)
+    embed = build_embed(
+        offer=data,
+        title='Failed to accept offer - ' + data['name'],
+        color=0xff2b2b
+    )
 
     asyncio.run(send_webhook(embed, url))
 
