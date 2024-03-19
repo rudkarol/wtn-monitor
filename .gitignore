@@ -1,11 +1,9 @@
-#.idea/**/shelf/
-#.idea/**/workspace.xml
-
+.idea
+.venv
 __pycache__/
-#venv/
 
 cookies
-config.yaml
 offers_IDs
+config.yaml
 proxies.txt
 wtn_acceptable.csv

@@ -175,7 +175,6 @@ class Monitor:
         sys.exit(f'ERROR - {mess}')
 
     def multiple_failed_requests(self, count: int, proxies_len: int):
-        # TODO fix
         count += 1
 
         if count > 15 or proxies_len:
