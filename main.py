@@ -1,5 +1,6 @@
 import datetime
 import pickle
+import ssl
 import time
 import httpx
 import csv
@@ -58,12 +59,6 @@ class Monitor:
         self.access_token = ""
 
         try:
-            self.recent_offers = read_recent_offers()
-            print(f'recent offers: {self.recent_offers}')
-
-            self.acceptable_offers = read_acceptable_offers()
-            self.proxies = load_proxies()
-
             monitor_config = config.Config()
             self.delay = monitor_config.get_delay()
             self.webhook_url = monitor_config.get_webhook_url()
@@ -73,6 +68,12 @@ class Monitor:
             if not self.cookies:
                 self.cookies = monitor_config.get_token()
 
+            self.proxies = load_proxies()
+
+            self.acceptable_offers = read_acceptable_offers()
+
+            self.recent_offers = read_recent_offers()
+            print(f'recent offers: {self.recent_offers}')
         except (FileNotFoundError, KeyError, ValueError, PermissionError, EOFError) as e:
             sys.exit(e)
 
@@ -197,12 +198,15 @@ class Monitor:
                 if e.response.status_code == 429:
                     self.stop_monitor('Session expired (429). Login and update the session token in the config.yaml file')
                 else:
+                    print(e)
                     self.multiple_failed_requests(failed_requests, len(self.proxies))
             except httpx.HTTPError as e:
                 print(e)
                 self.multiple_failed_requests(failed_requests, len(self.proxies))
             except (KeyError, ValueError) as e:
                 print(e)
+            except ssl.SSLError:
+                pass
 
             time.sleep(self.delay)
 
