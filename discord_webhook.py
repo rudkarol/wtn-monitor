@@ -4,7 +4,7 @@ from discord import Webhook, Embed, colour
 from datetime import datetime
 from aiohttp import ClientSession
 
-import settings
+import config
 
 
 def build_embed(offer: dict[str, str], title: str, color: colour) -> Embed:
@@ -22,37 +22,37 @@ def build_embed(offer: dict[str, str], title: str, color: colour) -> Embed:
     return embed
 
 
-def accepted_webhook(data: dict[str, str], additional_mess: str = ''):
+def accepted_webhook(data: dict[str, str], url: str, additional_mess: str = ''):
     title = 'Offer accepted! - ' + data['name'] + additional_mess
     embed = build_embed(offer=data, title=title, color=0x00c703)
 
-    asyncio.run(send_webhook(embed=embed))
+    asyncio.run(send_webhook(embed, url))
 
 
-def offer_webhook(data: dict[str, str]):
+def offer_webhook(data: dict[str, str], url: str):
     title = 'New offer - ' + data['name']
     embed = build_embed(offer=data, title=title, color=0xbfbfbf)
 
-    asyncio.run(send_webhook(embed=embed))
+    asyncio.run(send_webhook(embed, url))
 
 
-def failed_webhook(data: dict[str, str]):
+def failed_webhook(data: dict[str, str], url: str):
     title = 'Failed to accept offer - ' + data['name']
     embed = build_embed(offer=data, title=title, color=0xff2b2b)
 
-    asyncio.run(send_webhook(embed=embed))
+    asyncio.run(send_webhook(embed, url))
 
 
-def error_webhook(mess: str):
+def error_webhook(mess: str, url: str):
     embed = Embed(title=mess, color=0xff2b2b, timestamp=datetime.utcnow())
 
-    asyncio.run(send_webhook(embed=embed))
+    asyncio.run(send_webhook(embed, url))
 
 
-async def send_webhook(embed: Embed):
+async def send_webhook(embed: Embed, url: str):
     try:
         async with ClientSession() as client:
-            webhook = Webhook.from_url(url=settings.WEBHOOK_URL, session=client)
+            webhook = Webhook.from_url(url=url, session=client)
             await webhook.send(embed=embed)
     except Exception:
         pass

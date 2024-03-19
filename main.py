@@ -4,13 +4,12 @@ import time
 import httpx
 import csv
 import sys
-
 from random import choice
 
 import cookies
 import discord_webhook
 import headers
-import settings
+import config
 from proxy import load_proxies
 from discord_webhook import accepted_webhook, offer_webhook, failed_webhook
 
@@ -52,26 +51,8 @@ def read_recent_offers() -> dict[int, int]:
 
 
 def save_recent_offers(offers: dict[int, int]):
-    try:
-        with open('offers_IDs', 'wb') as file:
-            pickle.dump(offers, file)
-    except Exception:
-        pass
-
-
-def multiple_failed_requests(count: int, proxies_len: int):
-    count += 1
-
-    if count > 15 or proxies_len:
-        stop_monitor('Too many failed requests. Check proxies, login and fill out the cookies.json file')
-
-
-def stop_monitor(mess: str, clear_cookies: bool = True):
-    if clear_cookies:
-        cookies.clear_cookies_file()
-
-    discord_webhook.error_webhook(f'MONITOR STOPPED! - {mess}')
-    sys.exit(f'ERROR - {mess}')
+    with open('offers_IDs', 'wb') as file:
+        pickle.dump(offers, file)
 
 
 class Monitor:
@@ -83,6 +64,10 @@ class Monitor:
         self.cookies = cookies.restore_cookies()
         self.acceptable_offers = read_acceptable_offers()
         self.recent_offers = read_recent_offers()
+
+        monitor_config = config.Config()
+        self.delay = monitor_config.get_delay()
+        self.webhook_url = monitor_config.get_webhook_url()
 
         for proxy in self.proxies:
             c = httpx.Client(mounts=proxy.get_proxy())
@@ -129,7 +114,7 @@ class Monitor:
                     if offer['price'] >= self.acceptable_offers[offer['variantId']]:
                         self.accept_offer(offer)
                     elif (offer['id'], offer['price']) not in self.recent_offers.items():
-                        offer_webhook(offer)
+                        offer_webhook(data=offer, url=self.webhook_url)
 
                         self.recent_offers.update({offer['id']: offer['price']})
                         save_recent_offers(self.recent_offers)
@@ -151,18 +136,32 @@ class Monitor:
 
         if r.status_code == 201:
             print(f'Offer {offer["id"]} accepted')
-            accepted_webhook(offer)
+            accepted_webhook(data=offer, url=self.webhook_url)
         elif r.status_code == httpx.codes.OK:
             print(f'Offer {offer["id"]} accepted, - status code: {r.status_code}'
                   '\nCheck the sales tab on wtn to make sure the offer has been accepted.')
 
             accepted_webhook(
-                offer,
-                additional_mess='\nCheck the sales tab on wtn to make sure the offer has been accepted'
+                data=offer,
+                additional_mess='\nCheck the sales tab on wtn to make sure the offer has been accepted',
+                url=self.webhook_url
             )
         elif r.status_code != httpx.codes.OK:
             print(f'Failed to accept offer {offer["id"]} - status code: {r.status_code}')
-            failed_webhook(offer)
+            failed_webhook(data=offer, url=self.webhook_url)
+
+    def stop_monitor(self, mess: str, clear_cookies: bool = True):
+        if clear_cookies:
+            cookies.clear_cookies_file()
+
+        discord_webhook.error_webhook(f'MONITOR STOPPED! - {mess}', self.webhook_url)
+        sys.exit(f'ERROR - {mess}')
+
+    def multiple_failed_requests(self, count: int, proxies_len: int):
+        count += 1
+
+        if count > 15 or proxies_len:
+            self.stop_monitor('Too many failed requests. Check proxies, login and fill out the cookies.json file')
 
     def start(self):
         failed_requests = 0
@@ -173,11 +172,11 @@ class Monitor:
             self.access_token = self.initial_request()
             self.cookies = self.client.cookies.jar
         except (ValueError, KeyError, httpx.HTTPStatusError):
-            stop_monitor('Session expired. Login and fill out the cookies.json file')
+            self.stop_monitor('Session expired. Login and fill out the cookies.json file')
         except Exception as e:
-            stop_monitor(str(e), False)
+            self.stop_monitor(str(e), False)
 
-        time.sleep(settings.DELAY)
+        time.sleep(self.delay)
 
         while True:
             try:
@@ -187,14 +186,14 @@ class Monitor:
                 self.cookies = self.client.cookies.jar
             except httpx.HTTPStatusError as e:
                 if e.response.status_code == 429:
-                    stop_monitor('Session expired (429). Login and fill out the cookies.json file')
+                    self.stop_monitor('Session expired (429). Login and fill out the cookies.json file')
                 else:
-                    multiple_failed_requests(failed_requests, len(self.proxies))
+                    self.multiple_failed_requests(failed_requests, len(self.proxies))
             except Exception as e:
                 print(e)
-                multiple_failed_requests(failed_requests, len(self.proxies))
+                self.multiple_failed_requests(failed_requests, len(self.proxies))
 
-            time.sleep(settings.DELAY)
+            time.sleep(self.delay)
 
 
 if __name__ == '__main__':

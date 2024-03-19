@@ -5,5 +5,6 @@ __pycache__/
 #venv/
 
 cookies.json
+config.yaml
 offers_IDs
 proxies.txt
