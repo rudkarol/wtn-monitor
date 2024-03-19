@@ -4,13 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="89e6f543-ee81-4efc-bc68-7b14aeb68a83" name="Changes" comment="Some errors fixed">
-      <change afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+    <list default="true" id="89e6f543-ee81-4efc-bc68-7b14aeb68a83" name="Changes" comment="config">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/discord_webhook.py" beforeDir="false" afterPath="$PROJECT_DIR$/discord_webhook.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cookies.py" beforeDir="false" afterPath="$PROJECT_DIR$/cookies.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proxies.txt" beforeDir="false" afterPath="$PROJECT_DIR$/proxies.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/wtn_acceptable.csv" beforeDir="false" afterPath="$PROJECT_DIR$/wtn_acceptable.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -114,7 +113,7 @@
       <workItem from="1710493047034" duration="1703000" />
       <workItem from="1710674491306" duration="5878000" />
       <workItem from="1710850748632" duration="1713000" />
-      <workItem from="1710853836459" duration="4182000" />
+      <workItem from="1710853836459" duration="7839000" />
     </task>
     <task id="LOCAL-00001" summary="get offers">
       <option name="closed" value="true" />
@@ -268,7 +267,15 @@
       <option name="project" value="LOCAL" />
       <updated>1710680374542</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="config">
+      <option name="closed" value="true" />
+      <created>1710860394942</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1710860394942</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -305,12 +312,13 @@
     <MESSAGE value="exceptions handling" />
     <MESSAGE value="multiple failed requests handling" />
     <MESSAGE value="Some errors fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="Some errors fixed" />
+    <MESSAGE value="config" />
+    <option name="LAST_COMMIT_MESSAGE" value="config" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/wtn_monitor$config.coverage" NAME="config Coverage Results" MODIFIED="1710860216736" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/wtn_monitor$cookies.coverage" NAME="cookies Coverage Results" MODIFIED="1709661918872" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/wtn_monitor$discord_webhook.coverage" NAME="discord_webhook Coverage Results" MODIFIED="1710168671808" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/wtn_monitor$main.coverage" NAME="main Coverage Results" MODIFIED="1710860255831" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/wtn_monitor$main.coverage" NAME="main Coverage Results" MODIFIED="1710863744789" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

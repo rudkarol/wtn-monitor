@@ -61,13 +61,16 @@ class Monitor:
         self.clients_pool: list[httpx.Client] = []
         self.client = None
         self.access_token = ""
-        self.cookies = cookies.restore_cookies()
         self.acceptable_offers = read_acceptable_offers()
         self.recent_offers = read_recent_offers()
 
         monitor_config = config.Config()
         self.delay = monitor_config.get_delay()
         self.webhook_url = monitor_config.get_webhook_url()
+        self.cookies = cookies.restore_cookies()
+
+        if not self.cookies:
+            self.cookies = monitor_config.get_token()
 
         for proxy in self.proxies:
             c = httpx.Client(mounts=proxy.get_proxy())

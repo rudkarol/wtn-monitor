@@ -5,10 +5,11 @@ class Config:
     def __init__(self):
         try:
             with open('config.yaml', 'r') as cookies_file:
-                settings_dict = yaml.load(cookies_file, Loader=yaml.Loader)
-                self.webhook_url = settings_dict['webhook_url']
+                config_dict = yaml.load(cookies_file, Loader=yaml.Loader)
+                self.webhook_url = config_dict['webhook_url']
+                self.session_token = config_dict['__Secure-next-auth.session-token']
 
-                delay = int(settings_dict['delay'])
+                delay = int(config_dict['delay'])
 
                 if delay <= 0:
                     raise ValueError('config.yaml file contains incorrect delay value')
@@ -17,8 +18,9 @@ class Config:
         except FileNotFoundError:
             with open('config.yaml', 'w') as cookies_file:
                 data = {
-                    'webhook_url': '',
-                    'delay': '5'
+                    '__Secure-next-auth.session-token': '',
+                    'delay': '5',
+                    'webhook_url': ''
                 }
 
                 yaml.dump(data, cookies_file)
@@ -32,3 +34,6 @@ class Config:
 
     def get_delay(self):
         return self.delay
+
+    def get_token(self) -> dict[str, str]:
+        return {'__Secure-next-auth.session-token': self.session_token}
