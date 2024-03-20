@@ -23,6 +23,9 @@ def load_proxies() -> list[Proxy]:
                     Proxy(host, port, username, password)
                 )
 
+            if not proxy_list:
+                raise ValueError('proxies.txt file is empty')
+
             return proxy_list
     except FileNotFoundError:
         with open('proxies.txt', 'w'):
