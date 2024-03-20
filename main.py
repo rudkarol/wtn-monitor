@@ -3,7 +3,6 @@ import pickle
 import ssl
 import time
 import httpx
-import csv
 import sys
 from random import choice
 
@@ -11,28 +10,9 @@ import cookies
 import discord_webhook
 import headers
 import config
+import csv_loader
 from proxy import load_proxies
 from discord_webhook import accepted_webhook, offer_webhook, failed_webhook
-
-
-def read_acceptable_offers() -> dict[int, int]:
-    try:
-        with open('wtn_acceptable.csv', 'r') as csvfile:
-            acceptable_dict: dict[int, int] = {}
-            reader = csv.DictReader(csvfile)
-
-            for row in reader:
-                acceptable_dict.update({int(row['PID']): int(row['MIN_PRICE'])})
-
-            print(f'acceptable offers : {acceptable_dict}')
-
-            return acceptable_dict
-    except FileNotFoundError:
-        with open('wtn_acceptable.csv', 'w', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=['SKU', 'NAME', 'PID', 'MIN_PRICE'])
-            writer.writeheader()
-
-        raise FileNotFoundError('wtn_acceptable.csv file does not exist! File created')
 
 
 def read_recent_offers() -> dict[int, int]:
@@ -70,7 +50,7 @@ class Monitor:
 
             self.proxies = load_proxies()
 
-            self.acceptable_offers = read_acceptable_offers()
+            self.acceptable_offers = csv_loader.read_acceptable_offers()
 
             self.recent_offers = read_recent_offers()
             print(f'recent offers: {self.recent_offers}')
@@ -211,5 +191,13 @@ class Monitor:
 
 
 if __name__ == '__main__':
-    monitor = Monitor()
-    monitor.start()
+    print('1. Start monitor')
+    print('2. Update wtn_acceptable.csv')
+
+    option = input('Choose option: ')
+
+    if option == '1':
+        monitor = Monitor()
+        monitor.start()
+    elif option == '2':
+        csv_loader.update_file()
