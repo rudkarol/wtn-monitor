@@ -13,6 +13,7 @@ python main.py
    - login to wtn and copy session cookie, paste it into `config.yaml`, remember not to refresh the page after copy the cookie
    - set your discord channel webhook url
    - set the delay to 2-10 sec
+   - paste 10-30 residential proxies to `proxies.txt`, format: `host:port:username:password`
    - only `PID` and `MIN_PRICE` fields in `wtn_acceptable.csv` file are required, the other fields are for your use
 5. Run the monitor:
 ```
@@ -30,6 +31,7 @@ python3 main.py
    - login to wtn and copy session cookie, paste it into `config.yaml`, remember not to refresh the page after copying the cookie
    - set your discord channel webhook url
    - set the delay to 2-10 sec
+   - paste 10-30 residential proxies to `proxies.txt`, format: `host:port:username:password`
    - only `PID` and `MIN_PRICE` fields in `wtn_acceptable.csv` file are required, the other fields are for your use
 5. Run the monitor:
 ```
