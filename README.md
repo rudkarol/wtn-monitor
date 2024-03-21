@@ -1,7 +1,10 @@
 # wtn-monitor
 Wethenew monitor with automatic acceptance of offers and discord webhooks.
+
 #Installation
+
 ##Windows
+
 1. [Download](https://github.com/rudkarol/wtn-monitor/archive/refs/heads/main.zip) the latest release and unpack the .zip file
 2. Make shure you have already installed python by typing `python --version` in cmd, if not [download the latest version for Windows](https://www.python.org/downloads/)
 3. Go to unpacked directory and run: 
@@ -18,7 +21,9 @@ python main.py
 ```
 python main.py
 ```
+
 ##Linux
+
 1. [Download](https://github.com/rudkarol/wtn-monitor/archive/refs/heads/main.zip) the latest release and unpack the .zip file
 2. Install `pip` by typing `sudo apt install python3-pip` in terminal
 3. Go to unpacked directory and run: 
