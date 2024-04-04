@@ -1,18 +1,55 @@
 import datetime
 import pickle
-import ssl
 import time
 import httpx
 import sys
+import csv
 from random import choice
+from ssl import SSLError
 
 import cookies
 import discord_webhook
 import headers
 import config
-import csv_loader
 from proxy import load_proxies
 from discord_webhook import accepted_webhook, offer_webhook, failed_webhook
+
+
+def save_recent_offers(offers: dict[int, int]):
+    with open('offers_IDs', 'wb') as file:
+        pickle.dump(offers, file)
+
+
+def read_recent_offers() -> dict[int, int]:
+    try:
+        with open('offers_IDs', 'rb') as file:
+            return pickle.load(file)
+    except (EOFError, FileNotFoundError):
+        pass
+    except PermissionError:
+        raise PermissionError('delete the "offers_IDs" file')
+
+    return {}
+
+
+def read_acceptable_offers() -> dict[int, int]:
+    try:
+        with open('wtn_acceptable.csv', 'r') as csvfile:
+            acceptable_dict: dict[int, int] = {}
+            reader = csv.DictReader(csvfile)
+
+            for row in reader:
+                acceptable_dict.update({int(row['PID']): int(row['MIN_PRICE'])})
+
+            print(f'acceptable offers : {acceptable_dict}')
+
+            return acceptable_dict
+    except FileNotFoundError:
+        with open('wtn_acceptable.csv', 'w', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=['SKU', 'NAME', 'SIZE', 'PID', 'MIN_PRICE'])
+            writer.writeheader()
+
+        raise FileNotFoundError('wtn_acceptable.csv file does not exist! File created')
 
 
 class Monitor:
@@ -33,9 +70,9 @@ class Monitor:
 
             self.proxies = load_proxies()
 
-            self.acceptable_offers = csv_loader.read_acceptable_offers()
+            self.acceptable_offers = read_acceptable_offers()
 
-            self.recent_offers = self.read_recent_offers()
+            self.recent_offers = read_recent_offers()
             print(f'recent offers: {self.recent_offers}')
         except (FileNotFoundError, KeyError, ValueError, PermissionError, EOFError) as e:
             sys.exit(e)
@@ -44,23 +81,7 @@ class Monitor:
             c = httpx.Client(mounts=proxy.get_proxy())
             self.clients_pool.append(c)
 
-    def read_recent_offers(self) -> dict[int, int]:
-        try:
-            with open('offers_IDs', 'rb') as file:
-                return pickle.load(file)
-        except (EOFError, FileNotFoundError):
-            pass
-        except PermissionError:
-            raise PermissionError('delete the "offers_IDs" file')
-
-        return {}
-
-    def save_recent_offers(self, offers: dict[int, int]):
-        with open('offers_IDs', 'wb') as file:
-            pickle.dump(offers, file)
-
     def initial_request(self) -> str:
-        self.client = choice(self.clients_pool)
         self.client.cookies = self.cookies
 
         r = (self.client.get('https://sell.wethenew.com/api/auth/session')
@@ -112,7 +133,7 @@ class Monitor:
                         offer_webhook(data=offer, url=self.webhook_url)
 
                         self.recent_offers.update({offer['id']: offer['price']})
-                        self.save_recent_offers(self.recent_offers)
+                        save_recent_offers(self.recent_offers)
             except KeyError:
                 raise ValueError('the offer is incorrect')
 
@@ -167,6 +188,7 @@ class Monitor:
     def start(self):
         failed_requests = 0
 
+        self.client = choice(self.clients_pool)
         self.get_access_token()
 
         time.sleep(self.delay)
@@ -185,7 +207,7 @@ class Monitor:
                 self.multiple_failed_requests(failed_requests, len(self.proxies))
             except (KeyError, ValueError) as e:
                 print(e)
-            except ssl.SSLError:
+            except SSLError:
                 pass
 
             time.sleep(self.delay)

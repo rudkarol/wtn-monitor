@@ -31,3 +31,7 @@ def accept_offer_header(access_token: str) -> dict[str, str]:
         'sec-gpc': '1',
         'x-xss-protection': '1;mode=block'
     }
+
+
+def get_listings_header(access_token: str) -> dict[str, str]:
+    return get_offers_header(access_token)
